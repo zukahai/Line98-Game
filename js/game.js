@@ -50,6 +50,10 @@ class game {
         if (game_W != document.documentElement.clientWidth || game_H != document.documentElement.clientHeight) {
             this.canvas.width = document.documentElement.clientWidth;
             this.canvas.height = document.documentElement.clientHeight;
+            if (this.canvas.width > this.canvas.height)
+                this.canvas.width = this.canvas.height;
+            else 
+                this.canvas.height = this.canvas.width;
             game_W = this.canvas.width;
             game_H = this.canvas.height;
         }
