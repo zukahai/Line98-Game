@@ -11,6 +11,7 @@ SmallData = [];
 bfs = [];
 auto = false;
 index = 1;
+NballSmall = 3;
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
@@ -53,6 +54,48 @@ class game {
             } while (Data[I][J] != 0);
             Data[I][J] = Math.floor(Math.random() * 1000000) % 7 + 1;
         }
+    }
+
+    initSmallData() {
+        let ans = [];
+        let data0 = [];
+
+        for (let i = 0; i < 9; i++)
+            for (let j = 0; j < 9; j++)
+                if (Data[i][j] == 0)
+                    data0.push({x : i, y : j, value: Math.floor(Math.random() * 1000000)})
+
+        for (let i = data0.length - 1; i >= 1; i--)
+            for (let j = 0; j < i; j++)
+                if (data0[i].value > data0[j].value) {
+                    let t = data0[i];
+                    data0[i] = data0[j];
+                    data0[j] = t;
+                }
+        
+        NballSmall = (data0.length > 3) ? 3 : data0.length;
+        for (let i = 0; i < NballSmall; i++)
+            ans.push({x : data0[i].x, y : data0[i].y, value : data0[i].value % 7 + 1});
+        return ans;
+    }
+
+    randomOneBallSmall() {
+        let ans = [];
+        let data0 = [];
+
+        for (let i = 0; i < 9; i++)
+            for (let j = 0; j < 9; j++)
+                if (Data[i][j] == 0)
+                    data0.push({x : i, y : j, value: Math.floor(Math.random() * 1000000)})
+
+        for (let i = data0.length - 1; i >= 1; i--)
+            for (let j = 0; j < i; j++)
+                if (data0[i].value > data0[j].value) {
+                    let t = data0[i];
+                    data0[i] = data0[j];
+                    data0[j] = t;
+                }
+        Data[data0[0].x][data0[0].y] = Math.floor(Math.random() * 1000000) % 7 + 1;
     }
 
     listenMouse() {
@@ -127,23 +170,6 @@ class game {
             return false;
         return true;
     }
-    
-    initSmallData() {
-        let ans = [];
-        for (let i = 0; i < 3; i++) {
-            var I, J;
-            do {
-                I = Math.floor(Math.random() * 1000000) % 9;
-                J = Math.floor(Math.random() * 1000000) % 9;
-            } while (Data[I][J] != 0);
-            Data[I][J] = 1;
-            ans.push({x: I, y : J, value: Math.floor(Math.random() * 1000000) % 7 + 1});
-        }
-        for (let i = 0; i < 3; i++)
-            Data[ans[i].x][ans[i].y] = 0;
-        return ans;
-    }
-
 
     loop() {
         this.update();
@@ -162,9 +188,11 @@ class game {
             index++;
             if (index >= bfs.length) {
                 auto = false;
-                for (let i = 0; i < 3; i++)
+                for (let i = 0; i < NballSmall; i++)
                     if (Data[SmallData[i].x][SmallData[i].y] == 0)
                         Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
+                    else
+                        this.randomOneBallSmall();
                 SmallData = this.initSmallData();
             }
                 
@@ -205,7 +233,7 @@ class game {
                     else
                         this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 2 - rRadius / 2, yTT + i * sizezz + sizezz / 2 - rRadius / 2, rRadius, rRadius);
 
-        for (let k = 0; k < 3; k++) {
+        for (let k = 0; k < NballSmall; k++) {
             let i = SmallData[k].x;
             let j = SmallData[k].y;
             this.context.drawImage(ball_im[SmallData[k].value], xTT + j * sizezz + sizezz / 2 - sizezz / 6, yTT + i * sizezz + sizezz / 2 - sizezz / 6, sizezz / 3, sizezz / 3);
