@@ -1,6 +1,10 @@
 game_W = 0, game_H = 0;
 size = 0;
 xTT = yTT = 0;
+xStart = yStart = -1;
+rRadius = 0;
+ch = -3;
+cs = 0;
 Data = [];
 
 var bg_im = new Image();
@@ -47,10 +51,18 @@ class game {
         document.addEventListener("mousedown", evt => {
             var x = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
             var y = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
-            if (x >= xTT && x <= xTT + size && y >= yTT && y <= yTT + size)
-                console.log(x, ' ', y);
-            Data[Math.floor((y - yTT) / (size / 9))][Math.floor((x - xTT) / (size / 9))] = 1;
-            console.log(Data);
+            if (x >= xTT && x <= xTT + size && y >= yTT && y <= yTT + size) {
+                let XX = Math.floor((y - yTT) / (size / 9));
+                let YY = Math.floor((x - xTT) / (size / 9));
+                if (Data[XX][YY] != 0) {
+                    xStart = XX;
+                    yStart = YY;
+                }
+                
+            }
+            
+            // Data[Math.floor((y - yTT) / (size / 9))][Math.floor((x - xTT) / (size / 9))] = 1;
+            // console.log(Data);
         })
 
         document.addEventListener("mousemove", evt => {
@@ -68,18 +80,20 @@ class game {
     loop() {
         this.update();
         this.draw();
-        setTimeout(() => {
-            this.loop();
-        }, 30);
+        setTimeout(() => this.loop(), 30);
     }
 
     update() {
         this.render();
+        if (rRadius < (1 - 2/7) * (size / 9) / 2 || rRadius > (1 - 2/7) * (size / 9))
+            ch *= -1;
+        rRadius += ch;
+        // console.log(rRadius, ' ', (1 - 2/7) * (size / 9));
     }
 
  
     render() {
-        if (game_W != document.documentElement.clientWidth || game_H != document.documentElement.clientHeight) {
+        if (this.canvas.width / document.documentElement.clientWidth != cs) {
             this.canvas.width = document.documentElement.clientWidth;
             this.canvas.height = document.documentElement.clientHeight;
             if (this.canvas.width > this.canvas.height)
@@ -90,6 +104,9 @@ class game {
             xTT = size / 20;
             size *= 0.9;
             yTT = (game_H - size) / 2;
+            rRadius = (1 - 2/7) * (size / 9);
+            console.log("Render");
+            cs = this.canvas.width / document.documentElement.clientWidth;
         }
     }
 
@@ -103,7 +120,10 @@ class game {
         for (let i = 0; i < 9; i++)
             for (let j = 0; j < 9; j++)
                 if (Data[i][j] != 0)
-                    this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2/7) * sizezz, (1 - 2/7) * sizezz);
+                    if (i != xStart || j != yStart)
+                        this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2/7) * sizezz, (1 - 2/7) * sizezz);
+                    else
+                        this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 2 - rRadius / 2, yTT + i * sizezz + sizezz / 2 - rRadius / 2, rRadius, rRadius);
     }
 
     clearScreen() {
