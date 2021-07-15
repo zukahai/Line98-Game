@@ -2,6 +2,7 @@ game_W = 0, game_H = 0;
 size = 0;
 xTT = yTT = 0;
 xStart = yStart = -1;
+xEnd = yEnd = -1;
 rRadius = 0;
 ch = -3;
 cs = 0;
@@ -57,12 +58,13 @@ class game {
                 if (Data[XX][YY] != 0) {
                     xStart = XX;
                     yStart = YY;
+                } else {
+                    xEnd = XX;
+                    yEnd = YY;
+                    this.solve(xStart, yStart, xEnd, yEnd);
+                    xStart = yStart = xEnd = yEnd = -1;
                 }
-                
             }
-            
-            // Data[Math.floor((y - yTT) / (size / 9))][Math.floor((x - xTT) / (size / 9))] = 1;
-            // console.log(Data);
         })
 
         document.addEventListener("mousemove", evt => {
@@ -74,6 +76,10 @@ class game {
             var x = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
             var y = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
         })
+    }
+
+    solve(xStart, yStart, xEnd, yEnd) {
+        console.log(xStart, ' ', yStart, ' ', xEnd, ' ', yEnd);
     }
 
 
