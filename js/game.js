@@ -1,4 +1,6 @@
 game_W = 0, game_H = 0;
+size = 0;
+xTT = yTT = 0;
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
@@ -58,11 +60,13 @@ class game {
             this.canvas.width = document.documentElement.clientWidth;
             this.canvas.height = document.documentElement.clientHeight;
             if (this.canvas.width > this.canvas.height)
-                this.canvas.width = this.canvas.height;
-            else 
-                this.canvas.height = this.canvas.width;
+                this.canvas.width = 9 * this.canvas.height / 10
             game_W = this.canvas.width;
             game_H = this.canvas.height;
+            size = game_W;
+            xTT = size / 20;
+            size *= 0.9;
+            yTT = (game_H - size) / 2;
         }
     }
 
@@ -74,7 +78,7 @@ class game {
         this.context.clearRect(0, 0, game_W, game_H);
         this.context.fillStyle = '#000000';
         this.context.fillRect(0 , 0, game_W, game_H); 
-        this.context.drawImage(bg_im, game_W / 20 , game_H / 10, 9 * game_W / 10, 9 * game_H / 10);
+        this.context.drawImage(bg_im, xTT, yTT, size, size);
     }
 
     getWidth() {
