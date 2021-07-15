@@ -178,6 +178,12 @@ class game {
     }
 
     update() {
+        if (NballSmall == 1 || NballSmall == 0) {
+            window.alert("You loss");
+            NballSmall = -1000;
+        }
+        if (NballSmall < 0)
+            return;
         this.render();
         if (rRadius < (1 - 2/7) * (size / 9) / 2 || rRadius > (1 - 2/7) * (size / 9))
             ch *= -1;
@@ -194,6 +200,7 @@ class game {
                     else
                         this.randomOneBallSmall();
                 SmallData = this.initSmallData();
+                console.log(NballSmall);
             }
                 
         }
