@@ -200,8 +200,8 @@ class game {
                         Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
                     else
                         this.randomOneBallSmall();
-                    SmallData = this.initSmallData();
                     score += this.check();
+                    SmallData = this.initSmallData();
                 }
                 score += chc * 10;
             }
