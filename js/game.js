@@ -55,6 +55,15 @@ class game {
         }
     }
 
+    countBall() {
+        let count = 0;
+        for (let i = 0; i < 9; i++)
+            for (let j = 0; j < 9; j++)
+                if (Data[i][j] != 0)
+                    count++;
+        return count;
+    }
+
     initSmallData() {
         let ans = [];
         let data0 = [];
@@ -339,6 +348,7 @@ class game {
     drawScore() {
         this.context.font = this.getWidth() / 1.5 + 'px Arial Black';
         this.context.fillStyle = "#FF00CC";
+        this.context.fillText("Ball: " + this.countBall(), size / 9, size / 15);
         this.context.fillText("Score: " + score, game_W / 2 - size / 7, size / 15);
     }
 
