@@ -1,5 +1,8 @@
 game_W = 0, game_H = 0;
 
+var bg_im = new Image();
+bg_im.src = "images/bg.png";
+
 class game {
     constructor() {
         this.canvas = null;
@@ -22,6 +25,7 @@ class game {
         document.addEventListener("mousedown", evt => {
             var x = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
             var y = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
+            console.log(x, ' ', y);
         })
 
         document.addEventListener("mousemove", evt => {
@@ -39,6 +43,9 @@ class game {
     loop() {
         this.update();
         this.draw();
+        setTimeout(() => {
+            this.loop();
+        }, 30);
     }
 
     update() {
@@ -67,6 +74,7 @@ class game {
         this.context.clearRect(0, 0, game_W, game_H);
         this.context.fillStyle = '#000000';
         this.context.fillRect(0 , 0, game_W, game_H); 
+        this.context.drawImage(bg_im, game_W / 20 , game_H / 10, 9 * game_W / 10, 9 * game_H / 10);
     }
 
     getWidth() {
