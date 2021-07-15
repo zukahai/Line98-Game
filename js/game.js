@@ -7,6 +7,7 @@ rRadius = 0;
 ch = -3;
 cs = 0;
 Data = [];
+SmallData = [];
 bfs = [];
 auto = false;
 index = 1;
@@ -32,6 +33,9 @@ class game {
         document.body.appendChild(this.canvas);
 
         this.creatMatrix();
+        SmallData = this.initSmallData();
+        console.log(Data);
+        console.log(SmallData);
         this.render();
         this.loop();
 
@@ -123,6 +127,22 @@ class game {
             return false;
         return true;
     }
+    
+    initSmallData() {
+        let ans = [];
+        for (let i = 0; i < 3; i++) {
+            var I, J;
+            do {
+                I = Math.floor(Math.random() * 1000000) % 9;
+                J = Math.floor(Math.random() * 1000000) % 9;
+            } while (Data[I][J] != 0);
+            Data[I][J] = 1;
+            ans.push({x: I, y : J, value: Math.floor(Math.random() * 1000000) % 7 + 1});
+        }
+        for (let i = 0; i < 3; i++)
+            Data[ans[i].x][ans[i].y] = 0;
+        return ans;
+    }
 
 
     loop() {
@@ -140,8 +160,14 @@ class game {
             Data[bfs[index].x][bfs[index].y] = Data[bfs[index - 1].x][bfs[index - 1].y];
             Data[bfs[index - 1].x][bfs[index - 1].y] = 0;
             index++;
-            if (index >= bfs.length)
+            if (index >= bfs.length) {
                 auto = false;
+                for (let i = 0; i < 3; i++)
+                    if (Data[SmallData[i].x][SmallData[i].y] == 0)
+                        Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
+                SmallData = this.initSmallData();
+            }
+                
         }
     }
 
@@ -178,6 +204,13 @@ class game {
                         this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2/7) * sizezz, (1 - 2/7) * sizezz);
                     else
                         this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 2 - rRadius / 2, yTT + i * sizezz + sizezz / 2 - rRadius / 2, rRadius, rRadius);
+
+        for (let k = 0; k < 3; k++) {
+            let i = SmallData[k].x;
+            let j = SmallData[k].y;
+            this.context.drawImage(ball_im[SmallData[k].value], xTT + j * sizezz + sizezz / 2 - sizezz / 6, yTT + i * sizezz + sizezz / 2 - sizezz / 6, sizezz / 3, sizezz / 3);
+        }
+
     }
 
     clearScreen() {
