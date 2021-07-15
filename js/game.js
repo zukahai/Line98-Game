@@ -35,8 +35,6 @@ class game {
 
         this.creatMatrix();
         SmallData = this.initSmallData();
-        console.log(Data);
-        console.log(SmallData);
         this.render();
         this.loop();
 
@@ -194,16 +192,119 @@ class game {
             index++;
             if (index >= bfs.length) {
                 auto = false;
-                for (let i = 0; i < NballSmall; i++)
+                if (this.check() == 0) {
+                    for (let i = 0; i < NballSmall; i++)
                     if (Data[SmallData[i].x][SmallData[i].y] == 0)
                         Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
                     else
                         this.randomOneBallSmall();
-                SmallData = this.initSmallData();
-                console.log(NballSmall);
+                    SmallData = this.initSmallData();
+                }
             }
                 
         }
+    }
+
+    check() {
+        let ans = [];
+        for (let i = 0; i < 9; i++) {
+            let ans2 = [{x : i, y : 0}];
+            for (let j = 1; j < 10; j++)
+                if (this.isPoint(i, j) && Data[i][j] == Data[i][j - 1] && Data[i][j - 1] != 0)
+                    ans2.push({x : i, y : j});
+                else {
+                    if (ans2.length >= 5)
+                        ans = ans.concat(ans2);
+                    ans2 = [{x : i, y : j}];
+                }
+        }
+
+        for (let j = 0; j < 9; j++) {
+            let ans2 = [{x : 0, y : j}];
+            for (let i = 1; i < 10; i++)
+                if (this.isPoint(i, j) && Data[i][j] == Data[i - 1][j] && Data[i - 1][j] != 0)
+                    ans2.push({x : i, y : j});
+                else {
+                    if (ans2.length >= 5)
+                        ans = ans.concat(ans2);
+                    ans2 = [{x : i, y : j}];
+                }
+        }
+
+        for (let j = 0; j < 9; j++) {
+            let ans2 = [{x : 0, y : j}];
+            let J = j;
+            let I = 0;
+            do {
+                I++;
+                J++;
+                if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J - 1] && Data[I - 1][J - 1] != 0)
+                    ans2.push({x : I, y : J});
+                else {
+                    if (ans2.length >= 5) {
+                        ans = ans.concat(ans2);
+                    }
+                    ans2 = [{x : I, y : J}];
+                }
+            } while (this.isPoint(I, J));
+
+            ans2 = [{x : j, y : 0}];
+            J = 0;
+            I = j;
+            do {
+                I++;
+                J++;
+                if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J - 1] && Data[I - 1][J - 1] != 0)
+                    ans2.push({x : I, y : J});
+                else {
+                    if (ans2.length >= 5) {
+                        console.log(ans2);
+                        ans = ans.concat(ans2);
+                    }
+                    ans2 = [{x : I, y : J}];
+                }
+            } while (this.isPoint(I, J));
+        }
+
+        for (let j = 0; j < 9; j++) {
+            let ans2 = [{x : 0, y : j}];
+            let J = j;
+            let I = 0;
+            do {
+                I++;
+                J--;
+                if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J + 1] && Data[I - 1][J + 1] != 0)
+                    ans2.push({x : I, y : J});
+                else {
+                    if (ans2.length >= 5) {
+                        ans = ans.concat(ans2);
+                    }
+                    ans2 = [{x : I, y : J}];
+                }
+            } while (this.isPoint(I, J));
+
+            ans2 = [{x : j, y : 8}];
+            J = 8;
+            I = j;
+            do {
+                I++;
+                J--;
+                if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J + 1] && Data[I - 1][J + 1] != 0)
+                    ans2.push({x : I, y : J});
+                else {
+                    if (ans2.length >= 5) {
+                        console.log(ans2);
+                        ans = ans.concat(ans2);
+                    }
+                    ans2 = [{x : I, y : J}];
+                }
+            } while (this.isPoint(I, J));
+        }
+
+        for (let i = 0; i < ans.length; i++)
+            Data[ans[i].x][ans[i].y] = 0;
+        console.log(ans);
+        return ans.length;
     }
 
  
