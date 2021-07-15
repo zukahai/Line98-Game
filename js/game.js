@@ -1,6 +1,7 @@
 game_W = 0, game_H = 0;
 size = 0;
 xTT = yTT = 0;
+Data = [];
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
@@ -17,6 +18,9 @@ class game {
         this.context = this.canvas.getContext("2d");
         document.body.appendChild(this.canvas);
 
+        for (let  i = 0; i < 9; i++)
+            Data[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
         this.render();
         this.loop();
 
@@ -27,7 +31,10 @@ class game {
         document.addEventListener("mousedown", evt => {
             var x = evt.offsetX == undefined ? evt.layerX : evt.offsetX;
             var y = evt.offsetY == undefined ? evt.layerY : evt.offsetY;
-            console.log(x, ' ', y);
+            if (x >= xTT && x <= xTT + size && y >= yTT && y <= yTT + size)
+                console.log(x, ' ', y);
+            Data[Math.floor((y - yTT) / (size / 9))][Math.floor((x - xTT) / (size / 9))] = 1;
+            console.log(Data);
         })
 
         document.addEventListener("mousemove", evt => {
