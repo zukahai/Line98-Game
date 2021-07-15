@@ -12,6 +12,7 @@ bfs = [];
 auto = false;
 index = 1;
 NballSmall = 3;
+score = 0;
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
@@ -192,7 +193,8 @@ class game {
             index++;
             if (index >= bfs.length) {
                 auto = false;
-                if (this.check() == 0) {
+                let chc = this.check();
+                if (chc == 0) {
                     for (let i = 0; i < NballSmall; i++)
                     if (Data[SmallData[i].x][SmallData[i].y] == 0)
                         Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
@@ -200,6 +202,7 @@ class game {
                         this.randomOneBallSmall();
                     SmallData = this.initSmallData();
                 }
+                score += chc * 10;
             }
                 
         }
@@ -329,6 +332,13 @@ class game {
     draw() {
         this.clearScreen();
         this.drawBall();
+        this.drawScore();
+    }
+
+    drawScore() {
+        this.context.font = this.getWidth() / 1.5 + 'px Arial Black';
+        this.context.fillStyle = "#FF00CC";
+        this.context.fillText("Score: " + score, game_W / 2 - size / 7, size / 15);
     }
 
     drawBall() {
