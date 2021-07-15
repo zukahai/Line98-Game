@@ -201,6 +201,7 @@ class game {
                     else
                         this.randomOneBallSmall();
                     SmallData = this.initSmallData();
+                    score += this.check();
                 }
                 score += chc * 10;
             }
