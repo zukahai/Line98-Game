@@ -5,6 +5,11 @@ Data = [];
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
+var ball_im = [];
+for (let i = 1; i <= 7; i++) {
+    ball_im[i] = new Image();
+    ball_im[i].src = "images/ball/" + i + ".png"; 
+}
 
 class game {
     constructor() {
@@ -18,13 +23,24 @@ class game {
         this.context = this.canvas.getContext("2d");
         document.body.appendChild(this.canvas);
 
-        for (let  i = 0; i < 9; i++)
-            Data[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
+        this.creatMatrix();
         this.render();
         this.loop();
 
         this.listenMouse();
+    }
+
+    creatMatrix() {
+        for (let  i = 0; i < 9; i++)
+            Data[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        for (let i = 0; i < 7; i++) {
+            var I, J;
+            do {
+                I = Math.floor(Math.random() * 1000000) % 9;
+                J = Math.floor(Math.random() * 1000000) % 9;
+            } while (Data[I][J] != 0);
+            Data[I][J] = Math.floor(Math.random() * 1000000) % 7 + 1;
+        }
     }
 
     listenMouse() {
@@ -79,6 +95,15 @@ class game {
 
     draw() {
         this.clearScreen();
+        this.drawBall();
+    }
+
+    drawBall() {
+        let sizezz = size / 9;
+        for (let i = 0; i < 9; i++)
+            for (let j = 0; j < 9; j++)
+                if (Data[i][j] != 0)
+                    this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2/7) * sizezz, (1 - 2/7) * sizezz);
     }
 
     clearScreen() {
