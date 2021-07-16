@@ -182,12 +182,12 @@ class game {
     loop() {
         this.update();
         this.draw();
-        setTimeout(() => this.loop(), 30);
+        setTimeout(() => this.loop(), 40);
     }
 
     update() {
         if (NballSmall == 1 || NballSmall == 0) {
-            window.alert("You loss");
+            window.alert("You loss!\n" + "Your Score: " + score);
             NballSmall = -1000;
         }
         if (NballSmall < 0)
