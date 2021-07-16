@@ -12,12 +12,13 @@ bfs = [];
 auto = false;
 index = 1;
 NballSmall = 3;
+Ncolor = 6;
 score = 0;
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
 var ball_im = [];
-for (let i = 1; i <= 7; i++) {
+for (let i = 1; i <= Ncolor; i++) {
     ball_im[i] = new Image();
     ball_im[i].src = "images/ball/" + i + ".png"; 
 }
@@ -51,7 +52,7 @@ class game {
                 I = Math.floor(Math.random() * 1000000) % 9;
                 J = Math.floor(Math.random() * 1000000) % 9;
             } while (Data[I][J] != 0);
-            Data[I][J] = Math.floor(Math.random() * 1000000) % 7 + 1;
+            Data[I][J] = Math.floor(Math.random() * 1000000) % Ncolor + 1;
         }
     }
 
@@ -83,7 +84,7 @@ class game {
         
         NballSmall = (data0.length > 3) ? 3 : data0.length;
         for (let i = 0; i < NballSmall; i++)
-            ans.push({x : data0[i].x, y : data0[i].y, value : data0[i].value % 7 + 1});
+            ans.push({x : data0[i].x, y : data0[i].y, value : data0[i].value % Ncolor + 1});
         return ans;
     }
 
@@ -103,7 +104,7 @@ class game {
                     data0[i] = data0[j];
                     data0[j] = t;
                 }
-        Data[data0[0].x][data0[0].y] = Math.floor(Math.random() * 1000000) % 7 + 1;
+        Data[data0[0].x][data0[0].y] = Math.floor(Math.random() * 1000000) % Ncolor + 1;
     }
 
     listenMouse() {
