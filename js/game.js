@@ -9,18 +9,19 @@ cs = 0;
 Data = [];
 SmallData = [];
 bfs = [];
+ans = [];
 auto = false;
 index = 1;
 NballSmall = 3;
 Ncolor = 6;
-score = 0;
+score = timeDelay = 0;
 
 var bg_im = new Image();
 bg_im.src = "images/bg.png";
 var ball_im = [];
 for (let i = 1; i <= Ncolor; i++) {
     ball_im[i] = new Image();
-    ball_im[i].src = "images/ball/" + i + ".png"; 
+    ball_im[i].src = "images/ball/" + i + ".png";
 }
 
 class game {
@@ -44,7 +45,7 @@ class game {
     }
 
     creatMatrix() {
-        for (let  i = 0; i < 9; i++)
+        for (let i = 0; i < 9; i++)
             Data[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         for (let i = 0; i < 7; i++) {
             var I, J;
@@ -72,7 +73,7 @@ class game {
         for (let i = 0; i < 9; i++)
             for (let j = 0; j < 9; j++)
                 if (Data[i][j] == 0)
-                    data0.push({x : i, y : j, value: Math.floor(Math.random() * 1000000)})
+                    data0.push({ x: i, y: j, value: Math.floor(Math.random() * 1000000) })
 
         for (let i = data0.length - 1; i >= 1; i--)
             for (let j = 0; j < i; j++)
@@ -81,10 +82,10 @@ class game {
                     data0[i] = data0[j];
                     data0[j] = t;
                 }
-        
+
         NballSmall = (data0.length > 3) ? 3 : data0.length;
         for (let i = 0; i < NballSmall; i++)
-            ans.push({x : data0[i].x, y : data0[i].y, value : data0[i].value % Ncolor + 1});
+            ans.push({ x: data0[i].x, y: data0[i].y, value: data0[i].value % Ncolor + 1 });
         return ans;
     }
 
@@ -95,7 +96,7 @@ class game {
         for (let i = 0; i < 9; i++)
             for (let j = 0; j < 9; j++)
                 if (Data[i][j] == 0)
-                    data0.push({x : i, y : j, value: Math.floor(Math.random() * 1000000)})
+                    data0.push({ x: i, y: j, value: Math.floor(Math.random() * 1000000) })
 
         for (let i = data0.length - 1; i >= 1; i--)
             for (let j = 0; j < i; j++)
@@ -147,7 +148,7 @@ class game {
         let t = [];
         for (let i = 0; i < 9; i++)
             t[i] = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let queue = [{x : xStart, y : yStart}];
+        let queue = [{ x: xStart, y: yStart }];
         let index = 0;
         while (index < queue.length) {
             let X = queue[index].x;
@@ -155,20 +156,20 @@ class game {
             for (let i = X - 1; i <= X + 1; i++)
                 for (let j = Y - 1; j <= Y + 1; j++)
                     if (this.isPoint(i, j) && t[i][j] == 0 && Math.abs(i - X) + Math.abs(j - Y) == 1 && Data[i][j] == 0) {
-                        queue.push({x : i, y : j});
-                        t[i][j] = {x : X, y : Y};
+                        queue.push({ x: i, y: j });
+                        t[i][j] = { x: X, y: Y };
                     }
         }
         let ans = [];
         if (t[xEnd][yEnd] != 0) {
-            ans.push({x : xEnd, y : yEnd});
+            ans.push({ x: xEnd, y: yEnd });
             let X = xEnd;
             let Y = yEnd;
             while (X != xStart || Y != yStart) {
                 let Xt = t[X][Y].x;
                 Y = t[X][Y].y;
                 X = Xt;
-                ans.push({x : X, y : Y});
+                ans.push({ x: X, y: Y });
             }
         }
         return ans.reverse();
@@ -187,6 +188,16 @@ class game {
     }
 
     update() {
+        if (timeDelay-- > 0) {
+            return;
+        } else if (ans.length > 0) {
+            for (let i = 0; i < ans.length; i++)
+                Data[ans[i].x][ans[i].y] = 0;
+            score = Math.floor(score) + ans.length * 10;
+            ans = [];
+            console.log(score);
+        }
+
         if (NballSmall == 1 || NballSmall == 0) {
             window.alert("You loss!\n" + "Your Score: " + score);
             NballSmall = -1000;
@@ -194,7 +205,7 @@ class game {
         if (NballSmall < 0)
             return;
         this.render();
-        if (rRadius < (1 - 2/7) * (size / 9) / 2 || rRadius > (1 - 2/7) * (size / 9))
+        if (rRadius < (1 - 2 / 7) * (size / 9) / 2 || rRadius > (1 - 2 / 7) * (size / 9))
             ch *= -1;
         rRadius += ch;
         if (auto) {
@@ -203,125 +214,123 @@ class game {
             index++;
             if (index >= bfs.length) {
                 auto = false;
-                let chc = this.check();
-                if (chc == 0) {
+                ans = this.check();
+                if (ans.length == 0) {
                     for (let i = 0; i < NballSmall; i++)
-                    if (Data[SmallData[i].x][SmallData[i].y] == 0)
-                        Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
-                    else
-                        this.randomOneBallSmall();
+                        if (Data[SmallData[i].x][SmallData[i].y] == 0)
+                            Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
+                        else
+                            this.randomOneBallSmall();
                     score += this.check();
                     SmallData = this.initSmallData();
+                } else {
+                    timeDelay = 10;
                 }
-                score += chc * 10;
             }
-                
+
         }
     }
 
     check() {
         let ans = [];
         for (let i = 0; i < 9; i++) {
-            let ans2 = [{x : i, y : 0}];
+            let ans2 = [{ x: i, y: 0 }];
             for (let j = 1; j < 10; j++)
                 if (this.isPoint(i, j) && Data[i][j] == Data[i][j - 1] && Data[i][j - 1] != 0)
-                    ans2.push({x : i, y : j});
+                    ans2.push({ x: i, y: j });
                 else {
                     if (ans2.length >= 5)
                         ans = ans.concat(ans2);
-                    ans2 = [{x : i, y : j}];
+                    ans2 = [{ x: i, y: j }];
                 }
         }
 
         for (let j = 0; j < 9; j++) {
-            let ans2 = [{x : 0, y : j}];
+            let ans2 = [{ x: 0, y: j }];
             for (let i = 1; i < 10; i++)
                 if (this.isPoint(i, j) && Data[i][j] == Data[i - 1][j] && Data[i - 1][j] != 0)
-                    ans2.push({x : i, y : j});
+                    ans2.push({ x: i, y: j });
                 else {
                     if (ans2.length >= 5)
                         ans = ans.concat(ans2);
-                    ans2 = [{x : i, y : j}];
+                    ans2 = [{ x: i, y: j }];
                 }
         }
 
         for (let j = 0; j < 9; j++) {
-            let ans2 = [{x : 0, y : j}];
+            let ans2 = [{ x: 0, y: j }];
             let J = j;
             let I = 0;
             do {
                 I++;
                 J++;
                 if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J - 1] && Data[I - 1][J - 1] != 0)
-                    ans2.push({x : I, y : J});
+                    ans2.push({ x: I, y: J });
                 else {
                     if (ans2.length >= 5) {
                         ans = ans.concat(ans2);
                     }
-                    ans2 = [{x : I, y : J}];
+                    ans2 = [{ x: I, y: J }];
                 }
             } while (this.isPoint(I, J));
 
-            ans2 = [{x : j, y : 0}];
+            ans2 = [{ x: j, y: 0 }];
             J = 0;
             I = j;
             do {
                 I++;
                 J++;
                 if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J - 1] && Data[I - 1][J - 1] != 0)
-                    ans2.push({x : I, y : J});
+                    ans2.push({ x: I, y: J });
                 else {
                     if (ans2.length >= 5) {
                         console.log(ans2);
                         ans = ans.concat(ans2);
                     }
-                    ans2 = [{x : I, y : J}];
+                    ans2 = [{ x: I, y: J }];
                 }
             } while (this.isPoint(I, J));
         }
 
         for (let j = 0; j < 9; j++) {
-            let ans2 = [{x : 0, y : j}];
+            let ans2 = [{ x: 0, y: j }];
             let J = j;
             let I = 0;
             do {
                 I++;
                 J--;
                 if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J + 1] && Data[I - 1][J + 1] != 0)
-                    ans2.push({x : I, y : J});
+                    ans2.push({ x: I, y: J });
                 else {
                     if (ans2.length >= 5) {
                         ans = ans.concat(ans2);
                     }
-                    ans2 = [{x : I, y : J}];
+                    ans2 = [{ x: I, y: J }];
                 }
             } while (this.isPoint(I, J));
 
-            ans2 = [{x : j, y : 8}];
+            ans2 = [{ x: j, y: 8 }];
             J = 8;
             I = j;
             do {
                 I++;
                 J--;
                 if (this.isPoint(I, J) && Data[I][J] == Data[I - 1][J + 1] && Data[I - 1][J + 1] != 0)
-                    ans2.push({x : I, y : J});
+                    ans2.push({ x: I, y: J });
                 else {
                     if (ans2.length >= 5) {
                         console.log(ans2);
                         ans = ans.concat(ans2);
                     }
-                    ans2 = [{x : I, y : J}];
+                    ans2 = [{ x: I, y: J }];
                 }
             } while (this.isPoint(I, J));
         }
 
-        for (let i = 0; i < ans.length; i++)
-            Data[ans[i].x][ans[i].y] = 0;
-        console.log(ans);
-        return ans.length;
+        return ans;
     }
 
- 
+
     render() {
         if (this.canvas.width / document.documentElement.clientWidth != cs) {
             this.canvas.width = document.documentElement.clientWidth;
@@ -334,7 +343,7 @@ class game {
             xTT = size / 20;
             size *= 0.9;
             yTT = (game_H - size) / 2;
-            rRadius = (1 - 2/7) * (size / 9);
+            rRadius = (1 - 2 / 7) * (size / 9);
             console.log("Render");
             cs = this.canvas.width / document.documentElement.clientWidth;
         }
@@ -359,7 +368,7 @@ class game {
             for (let j = 0; j < 9; j++)
                 if (Data[i][j] != 0)
                     if (i != xStart || j != yStart)
-                        this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2/7) * sizezz, (1 - 2/7) * sizezz);
+                        this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 7, yTT + i * sizezz + sizezz / 7, (1 - 2 / 7) * sizezz, (1 - 2 / 7) * sizezz);
                     else
                         this.context.drawImage(ball_im[Data[i][j]], xTT + j * sizezz + sizezz / 2 - rRadius / 2, yTT + i * sizezz + sizezz / 2 - rRadius / 2, rRadius, rRadius);
 
@@ -374,7 +383,7 @@ class game {
     clearScreen() {
         this.context.clearRect(0, 0, game_W, game_H);
         this.context.fillStyle = '#000000';
-        this.context.fillRect(0 , 0, game_W, game_H); 
+        this.context.fillRect(0, 0, game_W, game_H);
         this.context.drawImage(bg_im, xTT, yTT, size, size);
     }
 
