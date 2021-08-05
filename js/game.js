@@ -221,7 +221,7 @@ class game {
                             Data[SmallData[i].x][SmallData[i].y] = SmallData[i].value;
                         else
                             this.randomOneBallSmall();
-                    score += this.check();
+                    ans = this.check();
                     SmallData = this.initSmallData();
                 } else {
                     timeDelay = 10;
